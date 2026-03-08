@@ -1,88 +1,87 @@
-const OPENAI_API_KEY = "{YOUR_OPENAI_API_KEY}"
+async function analyzeBusiness() {
+  const description = document.getElementById("companyInput").value.trim();
 
-async function analyzeBusiness(){
+  if (!description) {
+    alert("Please describe your company first.");
+    return;
+  }
 
-const description = document.getElementById("companyInput").value
+  document.getElementById("loading").innerText = "Analyzing...";
+  document.getElementById("tickets").innerText = "";
+  document.getElementById("cost").innerText = "";
+  document.getElementById("automation").innerText = "";
+  document.getElementById("savings").innerText = "";
 
-document.getElementById("loading").innerText = "Analyzing..."
+  try {
+    const response = await fetch("/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        description: description
+      })
+    });
 
-const prompt = `
-You are an AI consultant.
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Server error: ${response.status} - ${errorText}`);
+    }
 
-A company described their business below.
+    const result = await response.json();
 
-Estimate their customer support metrics and AI automation potential.
+    document.getElementById("tickets").innerText =
+      "Estimated tickets/day: " + result.tickets_per_day;
 
-Company description:
-${description}
+    document.getElementById("cost").innerText =
+      "Estimated yearly support cost: $" + Number(result.annual_support_cost).toLocaleString();
 
-Return ONLY JSON in this format:
+    document.getElementById("automation").innerText =
+      "Estimated automation potential: " + result.automation_percentage + "%";
 
-{
-"tickets_per_day": number,
-"annual_support_cost": number,
-"automation_percentage": number,
-"annual_savings": number
-}
-`
+    document.getElementById("savings").innerText =
+      "Estimated yearly AI savings: $" + Number(result.annual_savings).toLocaleString();
 
-const response = await fetch("https://api.openai.com/v1/chat/completions", {
-method: "POST",
-headers: {
-"Content-Type": "application/json",
-"Authorization": `Bearer ${OPENAI_API_KEY}`
-},
-body: JSON.stringify({
-model: "gpt-4o-mini",
-messages: [
-{role:"system",content:"You estimate customer support operations for businesses"},
-{role:"user",content:prompt}
-]
-})
-})
+    createChart(result);
 
-const data = await response.json()
-const text = data.choices[0].message.content
-const result = JSON.parse(text)
-
-document.getElementById("tickets").innerText =
-"Estimated tickets/day: " + result.tickets_per_day
-
-document.getElementById("cost").innerText =
-"Estimated yearly support cost: $" + result.annual_support_cost
-
-document.getElementById("automation").innerText =
-"Estimated automation potential: " + result.automation_percentage + "%"
-
-document.getElementById("savings").innerText =
-"Estimated yearly AI savings: $" + result.annual_savings
-
-createChart(result)
-
-document.getElementById("loading").innerText = ""
-
+    document.getElementById("loading").innerText = "";
+  } catch (error) {
+    console.error(error);
+    document.getElementById("loading").innerText = "Something went wrong.";
+    alert("Error: " + error.message);
+  }
 }
 
-function createChart(result){
+let costChartInstance = null;
 
-const ctx = document.getElementById('costChart')
+function createChart(result) {
+  const ctx = document.getElementById("costChart").getContext("2d");
 
-new Chart(ctx, {
-type: 'bar',
-data: {
-labels: ["Current Cost", "AI Savings"],
-datasets: [{
-label: "Support Cost",
-data: [
-result.annual_support_cost,
-result.annual_savings
-],
-backgroundColor: [
-"#ef4444",
-"#0B63F6"
-]
-}]
-}
-})
+  if (costChartInstance) {
+    costChartInstance.destroy();
+  }
 
+  costChartInstance = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["Current Cost", "AI Savings"],
+      datasets: [
+        {
+          label: "Support Cost",
+          data: [
+            result.annual_support_cost,
+            result.annual_savings
+          ]
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
 }
