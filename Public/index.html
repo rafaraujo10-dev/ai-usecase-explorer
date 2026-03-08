@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Customer Support ROI Analyzer</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <main class="container">
+    <h1>AI Customer Support ROI Analyzer</h1>
+
+    <p class="intro">
+      Describe your company and how customers usually contact you
+    </p>
+
+    <textarea
+      id="companyDescription"
+      placeholder="Example: DTC supplement brand doing about 200 orders per day. Customers mostly contact us by email about shipping, refunds and product questions."
+    ></textarea>
+
+    <br />
+
+    <button id="analyzeBtn">Analyze AI Opportunity</button>
+
+    <p id="loadingMessage" hidden>Analyzing...</p>
+    <p id="errorMessage"></p>
+
+    <section id="results" class="results">
+      <h2>Estimated Support Metrics</h2>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Estimated Tickets / Day</h3>
+          <p id="ticketsPerDay">—</p>
+        </div>
+
+        <div class="card">
+          <h3>Annual Support Cost</h3>
+          <p id="annualSupportCost">—</p>
+        </div>
+
+        <div class="card">
+          <h3>Automation Percentage</h3>
+          <p id="automationPercentage">—</p>
+        </div>
+
+        <div class="card">
+          <h3>Annual Savings</h3>
+          <p id="annualSavings">—</p>
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <h3>AI Consulting Summary</h3>
+        <p id="summary"></p>
+      </div>
+
+      <div class="summary-box">
+        <h3>Key Assumptions</h3>
+        <ul id="assumptions"></ul>
+      </div>
+
+      <div class="chart-box">
+        <canvas id="resultsChart"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
