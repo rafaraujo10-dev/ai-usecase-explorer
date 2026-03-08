@@ -27,31 +27,22 @@ Return ONLY JSON in this format:
 `
 
 const response = await fetch("https://api.openai.com/v1/chat/completions", {
-
 method: "POST",
-
 headers: {
 "Content-Type": "application/json",
 "Authorization": `Bearer ${OPENAI_API_KEY}`
 },
-
 body: JSON.stringify({
-
 model: "gpt-4o-mini",
-
 messages: [
 {role:"system",content:"You estimate customer support operations for businesses"},
 {role:"user",content:prompt}
 ]
-
 })
-
 })
 
 const data = await response.json()
-
 const text = data.choices[0].message.content
-
 const result = JSON.parse(text)
 
 document.getElementById("tickets").innerText =
@@ -77,31 +68,21 @@ function createChart(result){
 const ctx = document.getElementById('costChart')
 
 new Chart(ctx, {
-
 type: 'bar',
-
 data: {
-
 labels: ["Current Cost", "AI Savings"],
-
 datasets: [{
-
 label: "Support Cost",
-
 data: [
 result.annual_support_cost,
 result.annual_savings
 ],
-
 backgroundColor: [
 "#ef4444",
 "#0B63F6"
 ]
-
 }]
-
 }
-
 })
 
 }
