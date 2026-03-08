@@ -12,8 +12,13 @@ const errorMessageEl = document.getElementById("errorMessage");
 const loadingMessageEl = document.getElementById("loadingMessage");
 
 let resultsChart = null;
+let isAnalyzing = false;
 
 analyzeBtn.addEventListener("click", async () => {
+  if (isAnalyzing) {
+    return;
+  }
+
   const description = descriptionInput.value.trim();
 
   clearError();
@@ -23,9 +28,12 @@ analyzeBtn.addEventListener("click", async () => {
     return;
   }
 
+  isAnalyzing = true;
   setLoading(true);
 
   try {
+    console.log("Calling /analyze ...");
+
     const response = await fetch("/analyze", {
       method: "POST",
       headers: {
@@ -35,6 +43,8 @@ analyzeBtn.addEventListener("click", async () => {
     });
 
     const data = await response.json();
+
+    console.log("Response from /analyze:", data);
 
     if (!response.ok) {
       showError(data.error || "Something went wrong.");
@@ -47,6 +57,7 @@ analyzeBtn.addEventListener("click", async () => {
     showError("Network error while calling /analyze.");
     console.error(error);
   } finally {
+    isAnalyzing = false;
     setLoading(false);
   }
 });
@@ -82,38 +93,47 @@ function renderChart(data) {
     return;
   }
 
-  const ctx = canvas.getContext("2d");
-
   if (resultsChart) {
     resultsChart.destroy();
+    resultsChart = null;
   }
+
+  const ctx = canvas.getContext("2d");
 
   resultsChart = new Chart(ctx, {
     type: "bar",
     data: {
-      labels: ["Tickets/Day", "Annual Support Cost", "Automation %", "Annual Savings"],
+      labels: [
+        "Tickets/Day",
+        "Annual Support Cost",
+        "Automation %",
+        "Annual Savings"
+      ],
       datasets: [
         {
           label: "Estimated Value",
           data: [
-            data.tickets_per_day || 0,
-            data.annual_support_cost || 0,
-            data.automation_percentage || 0,
-            data.annual_savings || 0
+            Number(data.tickets_per_day) || 0,
+            Number(data.annual_support_cost) || 0,
+            Number(data.automation_percentage) || 0,
+            Number(data.annual_savings) || 0
           ]
         }
       ]
     },
     options: {
-      responsive: true,
+      responsive: false,
+      animation: false,
       maintainAspectRatio: false
     }
   });
 }
 
 function setLoading(isLoading) {
-  analyzeBtn.disabled = isLoading;
-  analyzeBtn.textContent = isLoading ? "Analyzing..." : "Analyze AI Opportunity";
+  if (analyzeBtn) {
+    analyzeBtn.disabled = isLoading;
+    analyzeBtn.textContent = isLoading ? "Analyzing..." : "Analyze AI Opportunity";
+  }
 
   if (loadingMessageEl) {
     loadingMessageEl.hidden = !isLoading;

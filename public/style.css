@@ -39,3 +39,15 @@ border-radius: 8px;
 canvas {
 margin-top: 30px;
 }
+.chart-box {
+  margin-top: 24px;
+  width: 700px;
+  max-width: 100%;
+}
+
+#resultsChart {
+  display: block;
+  width: 700px;
+  max-width: 100%;
+  height: 320px;
+}
