@@ -9,67 +9,118 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-badge">Atendro AI · Demo Tool</div>
+      <h1>AI Customer Support ROI Analyzer</h1>
+      <p class="hero-subtitle">
+        Turn a short company description into a benchmark-style support operations estimate.
+        This tool provides directional AI opportunity sizing for customer support teams.
+      </p>
+    </section>
 
-  <main class="container">
-    <h1>AI Customer Support ROI Analyzer</h1>
+    <section class="input-panel">
+      <label for="companyDescription" class="input-label">
+        Describe your company and how customers usually contact you
+      </label>
 
-    <p class="intro">
-      Describe your company and how customers usually contact you
-    </p>
+      <textarea
+        id="companyDescription"
+        placeholder="Example: We run a DTC supplement brand doing around 200 orders per day. Customers mostly contact us by email about shipping, refunds, subscriptions, and product questions."
+      ></textarea>
 
-    <textarea
-      id="companyDescription"
-      placeholder="Example: DTC supplement brand doing about 200 orders per day. Customers mostly contact us by email about shipping, refunds and product questions."
-    ></textarea>
+      <div class="actions">
+        <button id="analyzeBtn">Analyze AI Opportunity</button>
+        <p id="loadingMessage" hidden>Analyzing your support operation...</p>
+      </div>
 
-    <br />
-
-    <button id="analyzeBtn">Analyze AI Opportunity</button>
-
-    <p id="loadingMessage" hidden>Analyzing...</p>
-    <p id="errorMessage"></p>
+      <p id="errorMessage"></p>
+    </section>
 
     <section id="results" class="results">
-      <h2>Estimated Support Metrics</h2>
+      <div class="section-header">
+        <h2>Estimated Support Metrics</h2>
+        <p>
+          Directional estimate based on the business description provided and common support patterns
+          seen in ecommerce and customer service operations.
+        </p>
+      </div>
 
       <div class="cards">
-        <div class="card">
-          <h3>Estimated Tickets / Day</h3>
-          <p id="ticketsPerDay">—</p>
+        <div class="metric-card">
+          <span class="metric-label">Estimated Tickets / Day</span>
+          <span id="ticketsPerDay" class="metric-value">—</span>
         </div>
 
-        <div class="card">
-          <h3>Annual Support Cost</h3>
-          <p id="annualSupportCost">—</p>
+        <div class="metric-card">
+          <span class="metric-label">Annual Support Cost</span>
+          <span id="annualSupportCost" class="metric-value">—</span>
         </div>
 
-        <div class="card">
-          <h3>Automation Percentage</h3>
-          <p id="automationPercentage">—</p>
+        <div class="metric-card">
+          <span class="metric-label">Automation Potential</span>
+          <span id="automationPercentage" class="metric-value">—</span>
         </div>
 
-        <div class="card">
-          <h3>Annual Savings</h3>
-          <p id="annualSavings">—</p>
+        <div class="metric-card highlight-card">
+          <span class="metric-label">Potential Annual Savings</span>
+          <span id="annualSavings" class="metric-value">—</span>
         </div>
       </div>
 
-      <div class="summary-box">
-        <h3>AI Consulting Summary</h3>
-        <p id="summary"></p>
-      </div>
-
-      <div class="summary-box">
-        <h3>Key Assumptions</h3>
-        <ul id="assumptions"></ul>
-      </div>
-
-      <div class="chart-box">
-  <canvas id="resultsChart" width="700" height="320"></canvas>
+      <div class="insight-grid">
+        <div class="insight-card">
+          <h3>Executive Summary</h3>
+          <p id="summary">
+            —
+          </p>
         </div>
+
+        <div class="insight-card">
+          <h3>Benchmark Note</h3>
+          <p id="benchmarkNote">
+            —
+          </p>
+        </div>
+
+        <div class="insight-card">
+          <h3>Opportunity Level</h3>
+          <p id="opportunityLevel">
+            —
+          </p>
+        </div>
+
+        <div class="insight-card">
+          <h3>Recommended Next Step</h3>
+          <p id="recommendedNextStep">
+            —
+          </p>
+        </div>
+      </div>
+
+      <div class="two-column">
+        <div class="insight-card">
+          <h3>Key Assumptions</h3>
+          <ul id="assumptions"></ul>
+        </div>
+
+        <div class="insight-card">
+          <h3>Visual Snapshot</h3>
+          <div class="chart-box">
+            <canvas id="resultsChart" width="760" height="340"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="footnote-card">
+        <p>
+          This tool provides directional planning estimates, not audited operational forecasts.
+          Actual ticket volume, labor cost, automation rate, and savings can vary based on channel mix,
+          order complexity, product category, policy design, and current support workflows.
+        </p>
+      </div>
     </section>
   </main>
-
-  <script src="script.js"></script>
 </body>
+<script src="script.js"></script>
 </html>

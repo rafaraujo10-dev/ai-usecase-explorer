@@ -36,11 +36,18 @@ async function handleAnalyze(request, env) {
     }
 
     const systemPrompt = `
-You are an AI customer support operations consultant.
+You are a customer support operations consultant creating a directional benchmark-style estimate.
 
-Your job is to estimate support operations metrics for a company based on a short natural-language business description.
+The user provides a short description of a business. You must infer likely support operations metrics using practical, conservative, industry-style reasoning commonly applied to ecommerce and customer service teams.
 
-You must return ONLY valid JSON with this exact shape:
+Important:
+- Do NOT claim that you researched the internet or looked up real-time market data.
+- Do NOT say "based on internet research" or "market research found".
+- Frame the answer as a directional estimate based on common support benchmarks, operating patterns, and the description provided.
+- Be professional, concise, and useful.
+- Avoid generic filler language.
+
+Return ONLY valid JSON with this exact structure:
 
 {
   "tickets_per_day": number,
@@ -48,21 +55,25 @@ You must return ONLY valid JSON with this exact shape:
   "automation_percentage": number,
   "annual_savings": number,
   "summary": "string",
+  "benchmark_note": "string",
+  "opportunity_level": "string",
+  "recommended_next_step": "string",
   "assumptions": ["string", "string", "string"]
 }
 
 Rules:
-- Be realistic, practical, and conservative.
-- Infer likely support volume from business type, order volume, channel mix, and common customer issues.
-- annual_support_cost should be in USD.
-- automation_percentage should be a number from 0 to 100.
-- annual_savings should be in USD.
-- summary should be a short consulting-style explanation in plain English.
-- assumptions should be 3 short bullet-style strings.
-- Return JSON only. No markdown. No extra text.
+- annual_support_cost must be in USD.
+- annual_savings must be in USD.
+- automation_percentage must be between 0 and 100.
+- summary should read like a short executive summary for a prospect.
+- benchmark_note should explain that this is a directional estimate based on common support patterns for similar businesses.
+- opportunity_level should be one of: "Low", "Moderate", "High", "Very High".
+- recommended_next_step should sound like a practical consulting recommendation.
+- assumptions should be 3 short, concrete assumptions.
+- Return JSON only.
 `.trim();
 
-    const userPrompt = `Company description: ${description}`;
+    const userPrompt = `Business description: ${description}`;
 
     const openAiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -120,8 +131,13 @@ Rules:
       annual_support_cost: numberOrZero(parsed.annual_support_cost),
       automation_percentage: numberOrZero(parsed.automation_percentage),
       annual_savings: numberOrZero(parsed.annual_savings),
-      summary: typeof parsed.summary === "string" ? parsed.summary : "",
-      assumptions: Array.isArray(parsed.assumptions) ? parsed.assumptions.slice(0, 3) : []
+      summary: safeText(parsed.summary),
+      benchmark_note: safeText(parsed.benchmark_note),
+      opportunity_level: safeText(parsed.opportunity_level),
+      recommended_next_step: safeText(parsed.recommended_next_step),
+      assumptions: Array.isArray(parsed.assumptions)
+        ? parsed.assumptions.slice(0, 3).map(safeText)
+        : []
     };
 
     return jsonResponse(result, 200);
@@ -149,4 +165,8 @@ function jsonResponse(data, status = 200) {
 function numberOrZero(value) {
   const n = Number(value);
   return Number.isFinite(n) ? n : 0;
+}
+
+function safeText(value) {
+  return typeof value === "string" ? value.trim() : "";
 }
