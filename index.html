@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Customer Support ROI Analyzer</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<h1>AI Customer Support ROI Analyzer</h1>
+
+<p>Describe your company and how customers usually contact you</p>
+
+<textarea id="companyInput" placeholder="Example: DTC supplement brand doing about 200 orders per day. Customers mostly contact us by email about shipping, refunds and product questions."></textarea>
+
+<br>
+
+<button onclick="analyzeBusiness()">Analyze AI Opportunity</button>
+
+<div id="loading"></div>
+
+<div id="results">
+
+<h2>Estimated Support Metrics</h2>
+
+<p id="tickets"></p>
+<p id="cost"></p>
+<p id="automation"></p>
+<p id="savings"></p>
+
+<canvas id="costChart"></canvas>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
